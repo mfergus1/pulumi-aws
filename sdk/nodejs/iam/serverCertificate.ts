@@ -34,6 +34,7 @@ import * as utilities from "../utilities";
  *     privateKey: fs.readFileSync("test-key.pem", "utf-8"),
  * });
  * ```
+ * 
  * **Example with cert in-line:**
  * 
  * ```typescript
@@ -52,6 +53,7 @@ import * as utilities from "../utilities";
  * `,
  * });
  * ```
+ * 
  * **Use in combination with an AWS ELB resource:**
  * 
  * Some properties of an IAM Server Certificates cannot be updated while they are

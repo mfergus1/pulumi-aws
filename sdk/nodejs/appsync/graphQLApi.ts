@@ -6,6 +6,38 @@ import * as utilities from "../utilities";
 
 /**
  * Provides an AppSync GraphQL API.
+ * 
+ * ## Example Usage
+ * 
+ * ### API Key Authentication
+ * 
+ * ```typescript
+ * import * as pulumi from "@pulumi/pulumi";
+ * import * as aws from "@pulumi/aws";
+ * 
+ * const aws_appsync_graphql_api_example = new aws.appsync.GraphQLApi("example", {
+ *     authenticationType: "API_KEY",
+ *     name: "example",
+ * });
+ * ```
+ * 
+ * ### AWS Cognito User Pool Authentication
+ * 
+ * ```typescript
+ * import * as pulumi from "@pulumi/pulumi";
+ * import * as aws from "@pulumi/aws";
+ * 
+ * const aws_appsync_graphql_api_example = new aws.appsync.GraphQLApi("example", {
+ *     authenticationType: "AMAZON_COGNITO_USER_POOLS",
+ *     name: "example",
+ *     userPoolConfig: {
+ *         awsRegion: aws_region_current.name.apply(__arg0 => __arg0%!v(PANIC=interface conversion: il.Node is nil, not *il.ResourceNode)),
+ *         defaultAction: "DENY",
+ *         userPoolId: aws_cognito_user_pool_example.id,
+ *     },
+ * });
+ * ```
+ * 
  * ### AWS IAM Authentication
  * 
  * ```typescript
@@ -17,6 +49,7 @@ import * as utilities from "../utilities";
  *     name: "example",
  * });
  * ```
+ * 
  * ### OpenID Connect Authentication
  * 
  * ```typescript
@@ -31,6 +64,7 @@ import * as utilities from "../utilities";
  *     },
  * });
  * ```
+ * 
  * ### Enabling Logging
  * 
  * ```typescript

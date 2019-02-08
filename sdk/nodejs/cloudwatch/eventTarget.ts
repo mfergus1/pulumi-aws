@@ -130,6 +130,94 @@ import * as utilities from "../utilities";
  *     policy: aws_iam_policy_document_ssm_lifecycle.apply(__arg0 => __arg0.json),
  * });
  * ```
+ * 
+ * ## Example RunCommand Usage
+ * 
+ * ```typescript
+ * import * as pulumi from "@pulumi/pulumi";
+ * import * as aws from "@pulumi/aws";
+ * 
+ * const aws_cloudwatch_event_rule_stop_instances = new aws.cloudwatch.EventRule("stop_instances", {
+ *     description: "Stop instances nightly",
+ *     name: "StopInstance",
+ *     scheduleExpression: "cron(0 0 * * ? *)",
+ * });
+ * const aws_cloudwatch_event_target_stop_instances = new aws.cloudwatch.EventTarget("stop_instances", {
+ *     arn: `arn:aws:ssm:${var_aws_region}::document/AWS-RunShellScript`,
+ *     input: "{\"commands\":[\"halt\"]}",
+ *     roleArn: aws_iam_role_ssm_lifecycle.arn,
+ *     rule: aws_cloudwatch_event_rule_stop_instances.name,
+ *     runCommandTargets: [{
+ *         key: "tag:Terminate",
+ *         values: ["midnight"],
+ *     }],
+ *     targetId: "StopInstance",
+ * });
+ * ```
+ * 
+ * ## Example ECS Run Task with Role and Task Override Usage
+ * 
+ * ```typescript
+ * import * as pulumi from "@pulumi/pulumi";
+ * import * as aws from "@pulumi/aws";
+ * 
+ * const aws_iam_role_ecs_events = new aws.iam.Role("ecs_events", {
+ *     assumeRolePolicy: `{
+ *   "Version": "2012-10-17",
+ *   "Statement": [
+ *     {
+ *       "Sid": "",
+ *       "Effect": "Allow",
+ *       "Principal": {
+ *         "Service": "events.amazonaws.com"
+ *       },
+ *       "Action": "sts:AssumeRole"
+ *     }
+ *   ]
+ * }
+ * `,
+ *     name: "ecs_events",
+ * });
+ * const aws_cloudwatch_event_target_ecs_scheduled_task = new aws.cloudwatch.EventTarget("ecs_scheduled_task", {
+ *     arn: aws_ecs_cluster_cluster_name.arn,
+ *     ecsTarget: {
+ *         taskCount: 1,
+ *         taskDefinitionArn: aws_ecs_task_definition_task_name.arn,
+ *     },
+ *     input: `{
+ *   "containerOverrides": [
+ *     {
+ *       "name": "name-of-container-to-override",
+ *       "command": ["bin/console", "scheduled-task"]
+ *     }
+ *   ]
+ * }
+ * `,
+ *     roleArn: aws_iam_role_ecs_events.arn,
+ *     rule: aws_cloudwatch_event_rule_every_hour.name,
+ *     targetId: "run-scheduled-task-every-hour",
+ * });
+ * const aws_iam_role_policy_ecs_events_run_task_with_any_role = new aws.iam.RolePolicy("ecs_events_run_task_with_any_role", {
+ *     name: "ecs_events_run_task_with_any_role",
+ *     policy: aws_ecs_task_definition_task_name.arn.apply(__arg0 => `{
+ *     "Version": "2012-10-17",
+ *     "Statement": [
+ *         {
+ *             "Effect": "Allow",
+ *             "Action": "iam:PassRole",
+ *             "Resource": "*"
+ *         },
+ *         {
+ *             "Effect": "Allow",
+ *             "Action": "ecs:RunTask",
+ *             "Resource": "${__arg0%!v(PANIC=interface conversion: il.Node is nil, not *il.ResourceNode).replace("/:\\d+$/", ":*")}"
+ *         }
+ *     ]
+ * }
+ * `),
+ *     role: aws_iam_role_ecs_events.id,
+ * });
+ * ```
  */
 export class EventTarget extends pulumi.CustomResource {
     /**

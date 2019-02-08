@@ -29,9 +29,10 @@ import * as utilities from "../utilities";
  *     },
  * });
  * ```
+ * 
  * ### Access Policy
  * 
- * -> See also: [`aws_elasticsearch_domain_policy` resource](https://www.terraform.io/docs/providers/aws/r/elasticsearch_domain_policy.html)
+ * > See also: [`aws_elasticsearch_domain_policy` resource](https://www.terraform.io/docs/providers/aws/r/elasticsearch_domain_policy.html)
  * 
  * ```typescript
  * import * as pulumi from "@pulumi/pulumi";
@@ -61,6 +62,7 @@ import * as utilities from "../utilities";
  *     domainName: var_domain,
  * });
  * ```
+ * 
  * ### Log Publishing to CloudWatch Logs
  * 
  * ```typescript
@@ -96,6 +98,79 @@ import * as utilities from "../utilities";
  *         cloudwatchLogGroupArn: aws_cloudwatch_log_group_example.arn,
  *         logType: "INDEX_SLOW_LOGS",
  *     }],
+ * });
+ * ```
+ * ### VPC based ES
+ * 
+ * ```typescript
+ * import * as pulumi from "@pulumi/pulumi";
+ * import * as aws from "@pulumi/aws";
+ * 
+ * const config = new pulumi.Config();
+ * const var_domain = config.get("domain") || "tf-test";
+ * const var_vpc = config.require("vpc");
+ * 
+ * const aws_iam_service_linked_role_es = new aws.iam.ServiceLinkedRole("es", {
+ *     awsServiceName: "es.amazonaws.com",
+ * });
+ * const aws_caller_identity_current = pulumi.output(aws.getCallerIdentity({}));
+ * const aws_region_current = pulumi.output(aws.getRegion({}));
+ * const aws_vpc_selected = pulumi.output(aws.ec2.getVpc({
+ *     tags: {
+ *         Name: var_vpc,
+ *     },
+ * }));
+ * const aws_subnet_ids_selected = pulumi.output(aws.ec2.getSubnetIds({
+ *     tags: {
+ *         Tier: "private",
+ *     },
+ *     vpcId: aws_vpc_selected.apply(__arg0 => __arg0.id),
+ * }));
+ * const aws_elasticsearch_domain_es = new aws.elasticsearch.Domain("es", {
+ *     accessPolicies: pulumi.all([aws_region_current, aws_caller_identity_current]).apply(([__arg0, __arg1]) => `{
+ * 	"Version": "2012-10-17",
+ * 	"Statement": [
+ * 		{
+ * 			"Action": "es:*",
+ * 			"Principal": "*",
+ * 			"Effect": "Allow",
+ * 			"Resource": "arn:aws:es:${__arg0.name}:${__arg1.accountId}:domain/${var_domain}/*"
+ * 		}
+ * 	]
+ * }
+ * `),
+ *     advancedOptions: {
+ *         "rest.action.multi.allow_explicit_index": "true",
+ *     },
+ *     clusterConfig: {
+ *         instanceType: "m4.large.elasticsearch",
+ *     },
+ *     domainName: var_domain,
+ *     elasticsearchVersion: "6.3",
+ *     snapshotOptions: {
+ *         automatedSnapshotStartHour: 23,
+ *     },
+ *     tags: {
+ *         Domain: "TestDomain",
+ *     },
+ *     vpcOptions: {
+ *         securityGroupIds: [aws_security_group_elasticsearch.id],
+ *         subnetIds: [
+ *             aws_subnet_ids_selected.apply(__arg0 => __arg0.ids[0]),
+ *             aws_subnet_ids_selected.apply(__arg0 => __arg0.ids[1]),
+ *         ],
+ *     },
+ * }, {dependsOn: [aws_iam_service_linked_role_es]});
+ * const aws_security_group_es = new aws.ec2.SecurityGroup("es", {
+ *     description: "Managed by Terraform",
+ *     ingress: [{
+ *         cidrBlocks: [aws_vpc_selected.apply(__arg0 => __arg0.cidrBlocks)],
+ *         fromPort: 443,
+ *         protocol: "tcp",
+ *         toPort: 443,
+ *     }],
+ *     name: `${var_vpc}-elasticsearch-${var_domain}`,
+ *     vpcId: aws_vpc_selected.apply(__arg0 => __arg0.id),
  * });
  * ```
  */

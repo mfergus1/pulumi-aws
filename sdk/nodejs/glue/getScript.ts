@@ -16,13 +16,94 @@ import * as utilities from "../utilities";
  * import * as aws from "@pulumi/aws";
  * 
  * const aws_glue_script_example = pulumi.output(aws.glue.getScript({
- *     dagEdges: [],
- *     dagNodes: [],
+ *     dagEdges: [
+ *         {
+ *             source: "datasource0",
+ *             target: "applymapping1",
+ *         },
+ *         {
+ *             source: "applymapping1",
+ *             target: "selectfields2",
+ *         },
+ *         {
+ *             source: "selectfields2",
+ *             target: "resolvechoice3",
+ *         },
+ *         {
+ *             source: "resolvechoice3",
+ *             target: "datasink4",
+ *         },
+ *     ],
+ *     dagNodes: [
+ *         {
+ *             args: [
+ *                 {
+ *                     name: "database",
+ *                     value: aws_glue_catalog_database_source.name.apply(__arg0 => `"${__arg0%!v(PANIC=interface conversion: il.Node is nil, not *il.ResourceNode)}"`),
+ *                 },
+ *                 {
+ *                     name: "table_name",
+ *                     value: aws_glue_catalog_table_source.name.apply(__arg0 => `"${__arg0%!v(PANIC=interface conversion: il.Node is nil, not *il.ResourceNode)}"`),
+ *                 },
+ *             ],
+ *             id: "datasource0",
+ *             nodeType: "DataSource",
+ *         },
+ *         {
+ *             args: [{
+ *                 name: "mapping",
+ *                 value: "[(\"column1\", \"string\", \"column1\", \"string\")]",
+ *             }],
+ *             id: "applymapping1",
+ *             nodeType: "ApplyMapping",
+ *         },
+ *         {
+ *             args: [{
+ *                 name: "paths",
+ *                 value: "[\"column1\"]",
+ *             }],
+ *             id: "selectfields2",
+ *             nodeType: "SelectFields",
+ *         },
+ *         {
+ *             args: [
+ *                 {
+ *                     name: "choice",
+ *                     value: "\"MATCH_CATALOG\"",
+ *                 },
+ *                 {
+ *                     name: "database",
+ *                     value: aws_glue_catalog_database_destination.name.apply(__arg0 => `"${__arg0%!v(PANIC=interface conversion: il.Node is nil, not *il.ResourceNode)}"`),
+ *                 },
+ *                 {
+ *                     name: "table_name",
+ *                     value: aws_glue_catalog_table_destination.name.apply(__arg0 => `"${__arg0%!v(PANIC=interface conversion: il.Node is nil, not *il.ResourceNode)}"`),
+ *                 },
+ *             ],
+ *             id: "resolvechoice3",
+ *             nodeType: "ResolveChoice",
+ *         },
+ *         {
+ *             args: [
+ *                 {
+ *                     name: "database",
+ *                     value: aws_glue_catalog_database_destination.name.apply(__arg0 => `"${__arg0%!v(PANIC=interface conversion: il.Node is nil, not *il.ResourceNode)}"`),
+ *                 },
+ *                 {
+ *                     name: "table_name",
+ *                     value: aws_glue_catalog_table_destination.name.apply(__arg0 => `"${__arg0%!v(PANIC=interface conversion: il.Node is nil, not *il.ResourceNode)}"`),
+ *                 },
+ *             ],
+ *             id: "datasink4",
+ *             nodeType: "DataSink",
+ *         },
+ *     ],
  *     language: "PYTHON",
  * }));
  * 
  * export const pythonScript = aws_glue_script_example.apply(__arg0 => __arg0.pythonScript);
  * ```
+ * 
  * ### Generate Scala Code
  * 
  * ```typescript
@@ -30,8 +111,88 @@ import * as utilities from "../utilities";
  * import * as aws from "@pulumi/aws";
  * 
  * const aws_glue_script_example = pulumi.output(aws.glue.getScript({
- *     dagEdges: [],
- *     dagNodes: [],
+ *     dagEdges: [
+ *         {
+ *             source: "datasource0",
+ *             target: "applymapping1",
+ *         },
+ *         {
+ *             source: "applymapping1",
+ *             target: "selectfields2",
+ *         },
+ *         {
+ *             source: "selectfields2",
+ *             target: "resolvechoice3",
+ *         },
+ *         {
+ *             source: "resolvechoice3",
+ *             target: "datasink4",
+ *         },
+ *     ],
+ *     dagNodes: [
+ *         {
+ *             args: [
+ *                 {
+ *                     name: "database",
+ *                     value: aws_glue_catalog_database_source.name.apply(__arg0 => `"${__arg0%!v(PANIC=interface conversion: il.Node is nil, not *il.ResourceNode)}"`),
+ *                 },
+ *                 {
+ *                     name: "table_name",
+ *                     value: aws_glue_catalog_table_source.name.apply(__arg0 => `"${__arg0%!v(PANIC=interface conversion: il.Node is nil, not *il.ResourceNode)}"`),
+ *                 },
+ *             ],
+ *             id: "datasource0",
+ *             nodeType: "DataSource",
+ *         },
+ *         {
+ *             args: [{
+ *                 name: "mappings",
+ *                 value: "[(\"column1\", \"string\", \"column1\", \"string\")]",
+ *             }],
+ *             id: "applymapping1",
+ *             nodeType: "ApplyMapping",
+ *         },
+ *         {
+ *             args: [{
+ *                 name: "paths",
+ *                 value: "[\"column1\"]",
+ *             }],
+ *             id: "selectfields2",
+ *             nodeType: "SelectFields",
+ *         },
+ *         {
+ *             args: [
+ *                 {
+ *                     name: "choice",
+ *                     value: "\"MATCH_CATALOG\"",
+ *                 },
+ *                 {
+ *                     name: "database",
+ *                     value: aws_glue_catalog_database_destination.name.apply(__arg0 => `"${__arg0%!v(PANIC=interface conversion: il.Node is nil, not *il.ResourceNode)}"`),
+ *                 },
+ *                 {
+ *                     name: "table_name",
+ *                     value: aws_glue_catalog_table_destination.name.apply(__arg0 => `"${__arg0%!v(PANIC=interface conversion: il.Node is nil, not *il.ResourceNode)}"`),
+ *                 },
+ *             ],
+ *             id: "resolvechoice3",
+ *             nodeType: "ResolveChoice",
+ *         },
+ *         {
+ *             args: [
+ *                 {
+ *                     name: "database",
+ *                     value: aws_glue_catalog_database_destination.name.apply(__arg0 => `"${__arg0%!v(PANIC=interface conversion: il.Node is nil, not *il.ResourceNode)}"`),
+ *                 },
+ *                 {
+ *                     name: "table_name",
+ *                     value: aws_glue_catalog_table_destination.name.apply(__arg0 => `"${__arg0%!v(PANIC=interface conversion: il.Node is nil, not *il.ResourceNode)}"`),
+ *                 },
+ *             ],
+ *             id: "datasink4",
+ *             nodeType: "DataSink",
+ *         },
+ *     ],
  *     language: "SCALA",
  * }));
  * 

@@ -98,7 +98,7 @@ export class ClusterInstance extends pulumi.CustomResource {
      */
     public readonly identifier: pulumi.Output<string>;
     /**
-     * Creates a unique identifier beginning with the specified prefix. Conflicts with `identifer`.
+     * Creates a unique identifier beginning with the specified prefix. Conflicts with `identifier`.
      */
     public readonly identifierPrefix: pulumi.Output<string>;
     /**
@@ -274,7 +274,7 @@ export interface ClusterInstanceState {
      */
     readonly identifier?: pulumi.Input<string>;
     /**
-     * Creates a unique identifier beginning with the specified prefix. Conflicts with `identifer`.
+     * Creates a unique identifier beginning with the specified prefix. Conflicts with `identifier`.
      */
     readonly identifierPrefix?: pulumi.Input<string>;
     /**
@@ -362,7 +362,7 @@ export interface ClusterInstanceArgs {
      */
     readonly identifier?: pulumi.Input<string>;
     /**
-     * Creates a unique identifier beginning with the specified prefix. Conflicts with `identifer`.
+     * Creates a unique identifier beginning with the specified prefix. Conflicts with `identifier`.
      */
     readonly identifierPrefix?: pulumi.Input<string>;
     /**

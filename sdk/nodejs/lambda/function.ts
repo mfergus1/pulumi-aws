@@ -13,6 +13,8 @@ import {ARN} from "../index";
  * 
  * ## Example Usage
  * 
+ * ### Basic Example
+ * 
  * ```typescript
  * import * as pulumi from "@pulumi/pulumi";
  * import * as aws from "@pulumi/aws";
@@ -48,6 +50,70 @@ import {ARN} from "../index";
  *     runtime: "nodejs8.10",
  * });
  * ```
+ * 
+ * ### Lambda Layers
+ * 
+ * > **NOTE:** The `aws_lambda_layer_version` attribute values for `arn` and `layer_arn` will be swapped in version 2.0.0 of the Terraform AWS Provider. For version 1.x, use `layer_arn` references. For version 2.x, use `arn` references.
+ * 
+ * ```typescript
+ * import * as pulumi from "@pulumi/pulumi";
+ * import * as aws from "@pulumi/aws";
+ * 
+ * const aws_lambda_layer_version_example = new aws.lambda.LayerVersion("example", {});
+ * const aws_lambda_function_example = new aws.lambda.Function("example", {
+ *     layers: [aws_lambda_layer_version_example.layerArn],
+ * });
+ * ```
+ * 
+ * ## CloudWatch Logging and Permissions
+ * 
+ * For more information about CloudWatch Logs for Lambda, see the [Lambda User Guide](https://docs.aws.amazon.com/lambda/latest/dg/monitoring-functions-logs.html).
+ * 
+ * ```typescript
+ * import * as pulumi from "@pulumi/pulumi";
+ * import * as aws from "@pulumi/aws";
+ * 
+ * const aws_cloudwatch_log_group_example = new aws.cloudwatch.LogGroup("example", {
+ *     name: aws_lambda_function_test_lambda.functionName.apply(__arg0 => `/aws/lambda/${__arg0%!v(PANIC=interface conversion: il.Node is nil, not *il.ResourceNode)}`),
+ *     retentionInDays: 14,
+ * });
+ * const aws_iam_policy_lambda_logging = new aws.iam.Policy("lambda_logging", {
+ *     description: "IAM policy for logging from a lambda",
+ *     name: "lambda_logging",
+ *     path: "/",
+ *     policy: `{
+ *   "Version": "2012-10-17",
+ *   "Statement": [
+ *     {
+ *       "Action": [
+ *         "logs:CreateLogStream",
+ *         "logs:PutLogEvents"
+ *       ],
+ *       "Resource": "arn:aws:logs:*:*:*",
+ *       "Effect": "Allow"
+ *     }
+ *   ]
+ * }
+ * `,
+ * });
+ * const aws_iam_role_policy_attachment_lambda_logs = new aws.iam.RolePolicyAttachment("lambda_logs", {
+ *     policyArn: aws_iam_policy_lambda_logging.arn,
+ *     role: aws_iam_role_iam_for_lambda.name,
+ * });
+ * ```
+ * 
+ * ## Specifying the Deployment Package
+ * 
+ * AWS Lambda expects source code to be provided as a deployment package whose structure varies depending on which `runtime` is in use.
+ * See [Runtimes][6] for the valid values of `runtime`. The expected structure of the deployment package can be found in
+ * [the AWS Lambda documentation for each runtime][8].
+ * 
+ * Once you have created your deployment package you can specify it either directly as a local file (using the `filename` argument) or
+ * indirectly via Amazon S3 (using the `s3_bucket`, `s3_key` and `s3_object_version` arguments). When providing the deployment
+ * package via S3 it may be useful to use the `aws_s3_bucket_object` resource to upload it.
+ * 
+ * For larger deployment packages it is recommended by Amazon to upload via S3, since the S3 API has better support for uploading
+ * large files efficiently.
  */
 export class Function extends pulumi.CustomResource {
     /**

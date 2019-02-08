@@ -5,6 +5,7 @@ import * as pulumi from "@pulumi/pulumi";
 import * as utilities from "../utilities";
 
 /**
+ * Provides a Pinpoint SMS Channel resource.
  * 
  * ## Example Usage
  * 
@@ -57,7 +58,6 @@ import * as utilities from "../utilities";
  *     roleArn: aws_iam_role_role.arn,
  * });
  * ```
- * 
  */
 export class EmailChannel extends pulumi.CustomResource {
     /**
@@ -72,11 +72,29 @@ export class EmailChannel extends pulumi.CustomResource {
         return new EmailChannel(name, <any>state, { ...opts, id: id });
     }
 
+    /**
+     * The application ID.
+     */
     public readonly applicationId: pulumi.Output<string>;
+    /**
+     * Whether the channel is enabled or disabled. Defaults to `true`.
+     */
     public readonly enabled: pulumi.Output<boolean | undefined>;
+    /**
+     * The email address used to send emails from.
+     */
     public readonly fromAddress: pulumi.Output<string>;
+    /**
+     * The ARN of an identity verified with SES.
+     */
     public readonly identity: pulumi.Output<string>;
+    /**
+     * Messages per second that can be sent.
+     */
     public /*out*/ readonly messagesPerSecond: pulumi.Output<number>;
+    /**
+     * The ARN of an IAM Role used to submit events to Mobile Analytics' event ingestion service.
+     */
     public readonly roleArn: pulumi.Output<string>;
 
     /**
@@ -126,11 +144,29 @@ export class EmailChannel extends pulumi.CustomResource {
  * Input properties used for looking up and filtering EmailChannel resources.
  */
 export interface EmailChannelState {
+    /**
+     * The application ID.
+     */
     readonly applicationId?: pulumi.Input<string>;
+    /**
+     * Whether the channel is enabled or disabled. Defaults to `true`.
+     */
     readonly enabled?: pulumi.Input<boolean>;
+    /**
+     * The email address used to send emails from.
+     */
     readonly fromAddress?: pulumi.Input<string>;
+    /**
+     * The ARN of an identity verified with SES.
+     */
     readonly identity?: pulumi.Input<string>;
+    /**
+     * Messages per second that can be sent.
+     */
     readonly messagesPerSecond?: pulumi.Input<number>;
+    /**
+     * The ARN of an IAM Role used to submit events to Mobile Analytics' event ingestion service.
+     */
     readonly roleArn?: pulumi.Input<string>;
 }
 
@@ -138,9 +174,24 @@ export interface EmailChannelState {
  * The set of arguments for constructing a EmailChannel resource.
  */
 export interface EmailChannelArgs {
+    /**
+     * The application ID.
+     */
     readonly applicationId: pulumi.Input<string>;
+    /**
+     * Whether the channel is enabled or disabled. Defaults to `true`.
+     */
     readonly enabled?: pulumi.Input<boolean>;
+    /**
+     * The email address used to send emails from.
+     */
     readonly fromAddress: pulumi.Input<string>;
+    /**
+     * The ARN of an identity verified with SES.
+     */
     readonly identity: pulumi.Input<string>;
+    /**
+     * The ARN of an IAM Role used to submit events to Mobile Analytics' event ingestion service.
+     */
     readonly roleArn: pulumi.Input<string>;
 }

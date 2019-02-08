@@ -48,6 +48,7 @@ import * as utilities from "../utilities";
  *     preferredBackupWindow: "07:00-09:00",
  * });
  * ```
+ * 
  * ### Aurora MySQL 1.x (MySQL 5.6)
  * 
  * ```typescript
@@ -68,6 +69,7 @@ import * as utilities from "../utilities";
  *     preferredBackupWindow: "07:00-09:00",
  * });
  * ```
+ * 
  * ### Aurora with PostgreSQL engine
  * 
  * ```typescript
@@ -131,7 +133,7 @@ export class Cluster extends pulumi.CustomResource {
      */
     public readonly clusterIdentifier: pulumi.Output<string>;
     /**
-     * Creates a unique cluster identifier beginning with the specified prefix. Conflicts with `cluster_identifer`.
+     * Creates a unique cluster identifier beginning with the specified prefix. Conflicts with `cluster_identifier`.
      */
     public readonly clusterIdentifierPrefix: pulumi.Output<string>;
     /**
@@ -393,7 +395,7 @@ export interface ClusterState {
      */
     readonly clusterIdentifier?: pulumi.Input<string>;
     /**
-     * Creates a unique cluster identifier beginning with the specified prefix. Conflicts with `cluster_identifer`.
+     * Creates a unique cluster identifier beginning with the specified prefix. Conflicts with `cluster_identifier`.
      */
     readonly clusterIdentifierPrefix?: pulumi.Input<string>;
     /**
@@ -555,7 +557,7 @@ export interface ClusterArgs {
      */
     readonly clusterIdentifier?: pulumi.Input<string>;
     /**
-     * Creates a unique cluster identifier beginning with the specified prefix. Conflicts with `cluster_identifer`.
+     * Creates a unique cluster identifier beginning with the specified prefix. Conflicts with `cluster_identifier`.
      */
     readonly clusterIdentifierPrefix?: pulumi.Input<string>;
     /**
